@@ -3,7 +3,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # '3' suppresses INFO, WARNING, and ERROR messages
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "1"
 import tensorflow as tf
-
+import matplotlib.pyplot as plt
 
 def score(data, model = "triplet", batch_size = 32, raw_logits = False):
     """
@@ -44,7 +44,7 @@ def score(data, model = "triplet", batch_size = 32, raw_logits = False):
         raise Exception("""Please choose either "triplet" or "echo" as model!""")
     
     # data standardization check
-    assert np.min(data) == 0 and np.max(data) == 1, "Please make sure each cutout is standardized to within +/- 3 sigma and scaled between 0 and 1."
+    assert np.min(data) == 0 and np.round(np.max(data)) == 1, "Please make sure each cutout is standardized to within +/- 3 sigma and scaled between 0 and 1."
     
     # data = np.array(data[..., np.newaxis])
     
@@ -60,3 +60,23 @@ def score(data, model = "triplet", batch_size = 32, raw_logits = False):
     else:
         y_pred = np.argmax(y_probs, axis = 1)
         return(y_pred)
+    
+def plot_cutout(data, num_epochs = 3):
+    
+    # data should only be single triplet or 18 epochs
+    
+    assert data.shape[0] == 3 or data.shape[0] == 18, "Only one triplet or 18 epochs"
+    
+    if num_epochs == 3:
+        fig, ax = plt.subplots(1, num_epochs)
+    elif num_epochs == 18:
+        fig, ax = plt.subplots(3, 6, figsize = (12, 5))
+    
+    ax = ax.flatten() 
+    
+    for idx, i in enumerate(data):
+        ax[idx].imshow(i, cmap = "gray")
+        ax[idx].axis("off")
+    
+    plt.show()
+    return(fig)
