@@ -72,6 +72,9 @@ def plot_cutout(data, num_epochs = 3, ax = None):
         Input array of shape (n, 61, 61, 3) or (n, 61, 61, 18).
         Triplet cutouts (sci, ref, diff) or difference images (18 cutouts).
     
+    ax : <Axes: >
+        Matplotlib axis for external plotting
+    
     Returns
     -------
     y_prob : ndarray
