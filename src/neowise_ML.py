@@ -61,18 +61,42 @@ def score(data, model = "triplet", batch_size = 32, raw_logits = False):
         y_pred = np.argmax(y_probs, axis = 1)
         return(y_pred)
     
-def plot_cutout(data, num_epochs = 3):
+def plot_cutout(data, num_epochs = 3, ax = None):
+    
+    """
+    Plots one set of cutout images using the models described in Vega et al. 2026.
+
+    Parameters
+    ----------
+    data : ndarray
+        Input array of shape (n, 61, 61, 3) or (n, 61, 61, 18).
+        Triplet cutouts (sci, ref, diff) or difference images (18 cutouts).
+    
+    Returns
+    -------
+    y_prob : ndarray
+        Raw class probabilities of shape (n, 4). 
+        Classes: [reals, highpm, echo, artifact].
+    y_pred : ndarray
+        Class indices of shape (n,).
+        Mapping: {0: 'reals', 1: 'highpm', 2: 'echo', 3: 'artifact'}.
+    """
+    
     
     # data should only be single triplet or 18 epochs
     
     assert data.shape[0] == 3 or data.shape[0] == 18, "Only one triplet or 18 epochs"
     
-    if num_epochs == 3:
-        fig, ax = plt.subplots(1, num_epochs)
-    elif num_epochs == 18:
-        fig, ax = plt.subplots(3, 6, figsize = (12, 5))
     
-    ax = ax.flatten() 
+    if ax is not None:
+        fig = ax.get_figure()
+    else:
+        if data.shape[0] == 3:
+            fig, ax = plt.subplots(1, num_epochs)
+        elif data.shape[0] == 18:
+            fig, ax = plt.subplots(3, 6, figsize = (12, 5))
+    
+        ax = ax.flatten() 
     
     for idx, i in enumerate(data):
         ax[idx].imshow(i, cmap = "gray")
